@@ -1,0 +1,163 @@
+package threads;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class EvenOdd {
+    private final int max;
+    private int counter = 1;
+    private final Object lock = new Object();
+
+    public EvenOdd(int max) {
+        this.max = max;
+    }
+
+    private void odd() {
+        while (counter <= max) {
+            synchronized (lock) {
+                if (counter % 2 != 0) {
+                    System.out.println(Thread.currentThread().getName() + " -- " + counter);
+                    counter++;
+                    lock.notify();
+                } else {
+                    try {
+                        // wait() will release the lock and wait for another thread to notify it.
+                        // Please note that the thread must have a lock to call wait()
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+    }
+
+    private void even() {
+        {
+            while (counter <= max) {
+                synchronized (lock) {
+                    if (counter % 2 == 0) {
+                        System.out.println(Thread.currentThread().getName() + " -- " + counter);
+                        counter++;
+                        lock.notify();
+                    } else {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        EvenOdd evenOdd = new EvenOdd(10);
+        /*
+        Thread thread1 = new Thread(() -> evenOdd.even());
+        Thread thread2 = new Thread(() -> evenOdd.odd());
+
+        thread1.start();
+        thread2.start();
+         */
+
+        // Using Executor Service
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        executorService.execute(() -> evenOdd.even());
+        executorService.execute(() -> evenOdd.odd());
+
+        executorService.shutdown();
+    }
+}
+
+package stream_api;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class CodingInterviewQuestionsPart3 {
+    public static void main(String[] args) {
+        // Cognizant - Move all zeros to the right by maintaining the order of non-zero elements
+        List<Integer> list = Arrays.asList(1, 0, -3, 0, 5, -2, 0, 8, 0, -4);
+
+        List<Integer> collect = Stream
+                .concat(list.stream().filter(n -> n != 0), list.stream().filter(n -> n == 0))
+                .collect(Collectors.toList());
+
+        System.out.println(collect);
+
+        // Sort the map as per the values
+        Map<String, Integer> map1 = new HashMap<>();
+        map1.put("A", 50);
+        map1.put("B", 10);
+        map1.put("C", 32);
+        map1.put("D", 21);
+        map1.put("E", 4);
+
+        Map<String, Integer> sortedMap = map1
+                .entrySet()
+                .stream()
+//                .sorted(Comparator.comparing(e -> e.getValue()))
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                                e -> e.getKey(), e -> e.getValue(),
+                                (e1, e2) -> e1,
+                                () -> new LinkedHashMap<>()
+                        )
+                );
+        // toMap(keyMapper, valueMapper, mergeFunction, mapSupplier)
+
+        // mergeFunction: This function decides what to do if same key appears again?
+        // (v1, v2) -> v1   // keep old
+        // (v1, v2) -> v2   // keep new
+        // (v1, v2) -> v1 + v2   // combine
+
+        // mapSupplier: The return type of the function. Here we have used LinkedHashMap to preserve the order.
+
+        System.out.println(sortedMap);
+
+        // Write a function which return 7
+        System.out.println(getNumber(11));
+
+        // WAP to find duplicate elements from a list
+        List<Integer> list1 = Arrays.asList(1, 2, 3, 4, 5, 6, 2, 4, 9);
+        List<Integer> duplicates = list1
+                .stream()
+                .filter(n -> list1.indexOf(n) != list1.lastIndexOf(n))
+                .distinct()
+                .collect(Collectors.toList());
+        System.out.println(duplicates);
+
+        Map<Integer, Long> duplicateMap = list1
+                .stream()
+                .collect(Collectors.groupingBy(n -> n, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() > 1)
+                .collect(
+                        Collectors.toMap(
+                                e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e1, () -> new HashMap<>()
+                        )
+                );
+        System.out.println(duplicateMap);
+
+        Set<Integer> duplicateSet = list1
+                .stream()
+                .collect(Collectors.groupingBy(n -> n, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() > 1)
+                .map(n -> n.getKey())
+                .collect(Collectors.toSet());
+        System.out.println(duplicateSet);
+    }
+
+    private static int getNumber(int i) {
+        return i ^ 12;
+        // 11 + 7 - n
+    }
+}
+
+
