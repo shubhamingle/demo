@@ -1,0 +1,85 @@
+Access modifiers:
++   -->   Public
+-   -->   Private
+#   -->   Protected
+~   -->   Package
+
+Example of a Class UML diagram:
++-------------------+
+|      User         | <-- Class Name
++-------------------+
+| - userId: int     | <-- Attributes
+| - name: String    |
+| - email: String   |
++-------------------+
+| + login(): void   | <-- Methods
+| + logout(): void  |
++-------------------+
+
+The attributes & methods follow the pattern --> attribute/method_name: return_type
+
+For static fields & methods we simply underline it.
+
++---------------------------------------+
+|            Employee                   |
++---------------------------------------+
+| - id: int                             |
+| - name: String                        |
+| _- companyName: String_               |
++---------------------------------------+
+| + getName(): String                   |
+| _+ getCompanyName(): String_          |
+| _+ setCompanyName(name: String):void_ |
++---------------------------------------+
+
+For static fields/methods you can omit the access modifiers then that means the visibility is not shown.
+
+Relationships:
+
+Inheritance (▲)
+Customer extends User
+
+Association (—)
+Customer places an Order
+
+Aggregation (◇)
+Order contains one or more Products
+
+Composition (◼)
+
+
+Multiplicity:
+In UML, multiplicity (also called cardinality) shows how many instances of one class can be associated with another.
+
+Example:
+Customer 1 --------> 0..* Order
+A customer can have zero or more orders. (* means infinite)
+
+Note: Multiplicity is written at the opposite end of the arrow because it answers “How many objects of that class can one object of this class be connected to?”
+
+
+<ins>Roles</ins>:
+It answers "What role does this class play in this relationship?"
+Customer 1 -------- 0..* Order
+            orders
+An customer orders many Order.
+
+
+
+1. Association:
+Customer -------- Order
+
+Meaning:
+Bidirectional association
+Both classes know about each other
+Navigable both ways
+
+Customer --------> Order
+
+Meaning:
+Unidirectional association
+Customer knows about Order
+Order does NOT know about Customer
+
+
+
