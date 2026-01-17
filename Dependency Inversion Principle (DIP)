@@ -1,0 +1,96 @@
+This principle states that we must use abstraction (abstract classes and interface) instead of concrete implementation. High level modules should not depend on the low level module but both should depend on the abstraction.
+
+Code:
+
+// Violates DIP
+// The LightSwitch (high-level module) directly depends on Bulb (low-level module).
+// You cannot reuse LightSwitch for LED, TubeLight, SmartLight and any change in Bulb affects LightSwitch.
+
+class Bulb {
+    public void turnOn() {
+        System.out.println("Bulb ON");
+    }
+
+    public void turnOff() {
+        System.out.println("Bulb OFF");
+    }
+}
+
+class LightSwitch {
+    private Bulb bulb;
+
+    public LightSwitch() {
+        this.bulb = new Bulb(); // tightly coupled
+    }
+
+    public void pressOn() {
+        bulb.turnOn();
+    }
+
+    public void pressOff() {
+        bulb.turnOff();
+    }
+}
+
+// ----------------------------------------------------------------------------------------------------------
+
+// DIP-Compliant Design (Using Abstraction)
+
+Step 1: Create an abstraction
+interface Switchable {
+    void turnOn();
+    void turnOff();
+}
+
+Step 2: Low-level modules depend on abstraction
+class Bulb implements Switchable {
+    public void turnOn() {
+        System.out.println("Bulb ON");
+    }
+
+    public void turnOff() {
+        System.out.println("Bulb OFF");
+    }
+}
+
+class LED implements Switchable {
+    public void turnOn() {
+        System.out.println("LED ON");
+    }
+
+    public void turnOff() {
+        System.out.println("LED OFF");
+    }
+}
+
+Step 3: High-level module depends on abstraction
+class LightSwitch {
+    private Switchable device;
+
+    public LightSwitch(Switchable device) { // dependency injected
+        this.device = device;
+    }
+
+    public void pressOn() {
+        device.turnOn();
+    }
+
+    public void pressOff() {
+        device.turnOff();
+    }
+}
+
+Usage
+public class Room {
+    public static void main(String[] args) {
+        Switchable bulb = new Bulb();
+        LightSwitch switch1 = new LightSwitch(bulb);
+
+        switch1.pressOn();
+
+        Switchable led = new LED();
+        LightSwitch switch2 = new LightSwitch(led);
+
+        switch2.pressOn();
+    }
+}
