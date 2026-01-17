@@ -1,0 +1,93 @@
+This principle states that objects of a superclass should be replaceable with objects of its subclass without altering the correctness of the program. 
+In simpler terms, if class B is a subclass of A, then anywhere you can use an A, you should be able to use a B without breaking the behavior.
+
+The popular sentence “Object of parent class should be replaceable with object of child class” is poorly worded.
+
+Correct interpretation:
+An object referenced as the parent type should be replaceable by an object of any of its child types without breaking behavior.
+
+Code:
+// Violates LSP
+class Bird {
+	public void fly() {
+		System.out.println("Bird is flying.");
+	}
+
+	public void walk() {
+		System.out.println("Bird is walking.");
+	}
+}
+
+class Sparrow extends Bird {
+}
+
+class Ostrich extends Bird {
+	// Ostriches cannot fly, so this method might do nothing or throw an exception,
+	// which changes the expected behavior of a Bird.
+	@Override
+	public void fly() {
+		throw new UnsupportedOperationException("Ostriches cannot fly!");
+	}
+}
+
+public class Zoo {
+
+	public static void main(String[] args) {
+		Bird bird1 = new Sparrow();
+		Bird bird2 = new Ostrich(); // This assignment is the replacement.
+		// This violates LSP because the reference of Parent class (Bird) is not
+		// replaceable by the child class object (Ostrich)
+		// because substituting Ostrich changes correct behavior into failure (throws
+		// exception)
+
+		Zoo zoo = new Zoo();
+		zoo.makeBirdsFly(bird1);
+		zoo.makeBirdsFly(bird2);
+	}
+
+	public void makeBirdsFly(Bird bird) {
+		bird.fly(); // This will crash if an object of Ostrich is passed
+	}
+}
+
+// Adheres to LSP
+
+class Bird {
+	public void walk() {
+		System.out.println("Bird is walking.");
+	}
+}
+
+interface Flyable {
+	public void fly();
+}
+
+class Sparrow extends Bird implements Flyable {
+
+	@Override
+	public void fly() {
+		System.out.println("Bird is flying.");
+
+	}
+
+}
+
+class Ostrich extends Bird {
+}
+
+public class Aviary {
+
+	public static void main(String[] args) {
+		Flyable bird1 = new Sparrow();
+		Bird bird2 = new Ostrich();
+
+		Aviary aviary = new Aviary();
+		aviary.makeBirdsFly(bird1);
+//		aviary.makeBirdsFly(bird2); // This will give compile-time exception so violation of LSP is prevented
+	}
+
+	public void makeBirdsFly(Flyable bird) {
+		bird.fly();
+	}
+}
+
