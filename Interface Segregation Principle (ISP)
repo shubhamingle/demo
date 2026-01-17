@@ -1,0 +1,46 @@
+The principle states that the larger interfaces must be split into smaller ones because the implementation classes should use only the methods that are required. We should not force the client to use the methods that they do not want to use.
+The goal of ISP is similar to single responsibility principle.
+
+Code:
+//Violates ISP
+interface Worker {
+	void work();
+
+	void eat();
+
+	void sleep();
+}
+
+class HumanWorker implements Worker {
+	@Override
+	public void work() {
+		System.out.println("Human working.");
+	}
+
+	@Override
+	public void eat() {
+		System.out.println("Human eating.");
+	}
+
+	@Override
+	public void sleep() {
+		System.out.println("Human sleeping.");
+	}
+}
+
+class Robot implements Worker {
+	@Override
+	public void work() {
+		System.out.println("Robot working.");
+	}
+
+	@Override
+	public void eat() {
+		// Robots don't eat, so this is an empty/dummy implementation
+	}
+
+	@Override
+	public void sleep() {
+		// Robots don't sleep, so this is an empty/dummy implementation
+	}
+}
