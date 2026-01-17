@@ -6,7 +6,7 @@ Access modifiers:
 
 Example of a Class UML diagram:
 +-------------------+
-|      User         | <-- Class Name
+|      User         | <-- Class Name (In Italic or <<Class Name>> for interfaces)
 +-------------------+
 | - userId: int     | <-- Attributes
 | - name: String    |
@@ -36,16 +36,16 @@ For static fields/methods you can omit the access modifiers then that means the 
 
 Relationships:
 
-Inheritance (▲)
+1. Inheritance (▷)
 Customer extends User
 
-Association (—)
+2. Association (—)
 Customer places an Order
 
-Aggregation (◇)
+3. Aggregation (◇)
 Order contains one or more Products
 
-Composition (◼)
+4. Composition (◆)
 
 
 Multiplicity:
@@ -58,7 +58,7 @@ A customer can have zero or more orders. (* means infinite)
 Note: Multiplicity is written at the opposite end of the arrow because it answers “How many objects of that class can one object of this class be connected to?”
 
 
-<ins>Roles</ins>:
+Roles:
 It answers "What role does this class play in this relationship?"
 Customer 1 -------- 0..* Order
             orders
@@ -81,5 +81,27 @@ Unidirectional association
 Customer knows about Order
 Order does NOT know about Customer
 
+2. Aggregation (◇)
+When the associating object can exist without the parent object it is called Aggregation.
+Person ◇-------- House
+Person HAS-A House and House can exist even without the Person.
+
+3. Composition (◆)
+When the associating object cannot exist without the parent object it is called Composition.
+Person ◆-------- Heart
+Person HAS-A Heart and Heart cannot exist without the Person.
+
+We can also have multiplicity and roles in Aggregation & Composition
+Example:
+House 1 ◆──────── 1..* Room
+           rooms
+One House HAS-A one or more rooms
+
+4. Inheritance (▷)
+It is IS-A relationship.
+ChildClass ───────▷ ParentClass
+
+───────▷      :      extends
+-------▷      :      implements
 
 
