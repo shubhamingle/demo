@@ -1,0 +1,607 @@
+268. Missing Number
+
+Approach:
+
+1. Find the sum of all numbers using formula: (n * (n + 1)) / 2, where n is the length of the array.
+2. Find the sum of the elements in the array.
+3. Subtract the sum of all the elements with sum of elements in the array.
+
+T.C: O(n), S.C: O(1)
+
+53. Kadane's Algorithm:
+
+It is used to solve problems with finding the maximum subarray sum (positives + negatives)
+
+Approach:
+
+1. Initialize current_sum to first element or 0. Initialize max_sum to first element or minimum integer value.
+
+2. Iterate over the array and add the element to current_sum.
+
+3. Find the maximum between current_sum and max_sum and update the value of max_sum.
+
+4. If the value of current_sum goes below 0, then we set current_sum to 0 because if the value is negative then if we add the next value then its sum is going to be less than the added value.
+
+public int maxSubArray(int[] nums) {
+	int max_sum = Integer.MIN_VALUE;
+	int current_sum = 0;
+
+	for (int i = 0; i < nums.length; i++) {
+		current_sum += nums[i];
+
+		max_sum = Math.max(max_sum, current_sum);
+
+		if (current_sum < 0) {
+			current_sum = 0;
+		}
+	}
+
+	return max_sum;
+}
+
+T.C: O(n), S.C: O(1)
+
+To rotate an n x n 2D matrix by 90 degrees (clockwise)
+[1,2,3]      [7,4,1]
+[4,5,6]	 ->	 [8,5,2]
+[7,8,9]		 [9,6,3]
+
+Approach:
+
+1. Flip the matrix upside down
+[7,8,9]
+[4,5,6]
+[1,2,3]
+
+2. Take transpose of each element
+Transpose of matrix[i][j] = matrix[j][i]
+[7,4,1]
+[8,5,2]
+[9,6,3]
+
+Code:
+public void rotate(int[][] matrix) {
+	// Flip the matrix upside down
+	int rowLength = matrix[0].length;
+	int colLength = matrix.length;
+	int k = colLength - 1;
+
+	for (int i = 0; i < (colLength / 2); i++) {
+		for (int j = 0; j < rowLength; j++) {
+			int temp = matrix[i][j];
+			matrix[i][j] = matrix[k][j];
+			matrix[k][j] = temp;
+		}
+		k--;
+	}
+
+	// Transpose of matrix
+	for (int i = 0; i < colLength; i++) {
+		for (int j = i + 1; j < rowLength; j++) { // Transpose only the upper right half to avoid double transpose
+			int temp = matrix[i][j];
+			matrix[i][j] = matrix[j][i];
+			matrix[j][i] = temp;
+		}
+	}
+}
+
+1. Two Sum
+
+*Map Approach*
+1. Maintain a map where key is the element of the array and value is the index position.
+2. Iterate the array and check if (target - current element) is present in the map.
+	a. If it is present then it is one of the answer (current element and the (target - current element) in the map).
+	b. Else put the element and its index number in the map.
+	
+T.C: O(n), S.C: O(n)
+
+Note: If the index of the elements are required then you cannot use two pointer approach, because two pointer approach works on a sorted array.
+
+15. 3Sum
+
+public List<List<Integer>> threeSum(int[] nums) {
+	List<List<Integer>> result = new ArrayList<List<Integer>>();
+	int n = nums.length;
+
+	// We'll be using the 2 pointer approach to find the second and third element. 2 pointer approach works on an sorted array.
+	Arrays.sort(nums);
+
+	for (int i = 0; i < n; i++) {
+		// If the previous element is same as the current element then there is a chance that the result array would be the same
+		// For e.g. [-1, -1, 0, 1, 2] will have [-1, -1, 2], [-1, 0, 1] and [-1, 0, 1] where one array is duplicate
+		if (i > 0 && nums[i] == nums[i - 1]) {
+			continue;
+		}
+
+		int start = i + 1;
+		int end = n - 1;
+
+		while (start < end) {
+			int total = nums[i] + nums[start] + nums[end];
+
+			if (total > 0) {
+				end--;
+			} else if (total < 0) {
+				start++;
+			} else {
+				result.add(Arrays.asList(nums[i], nums[start], nums[end]));
+				start++;
+				end--;
+
+				// We have to change both the elements to avoid duplicates.
+				// For e.g. [0, 0, 0, 0] = [i, start, 0, end] and after start++ [i, 0, start, end]. i, start and end is same in both cases
+				while (start < end && nums[start] == nums[start - 1]) {
+					start++;
+				}
+				
+				while (start < end && nums[end] == nums[end + 1]) {
+                    end--;
+                }
+			}
+		}
+	}
+
+	return result;
+}
+
+18. 4Sum
+public List<List<Integer>> fourSum(int[] nums, int target) {
+	List<List<Integer>> result = new ArrayList<List<Integer>>();
+	int n = nums.length;
+
+	Arrays.sort(nums);
+
+	for (int i = 0; i < n; i++) {
+		if (i > 0 && nums[i] == nums[i - 1]) {
+			continue;
+		}
+
+		for (int j = i + 1; j < n; j++) {
+			if (j != i + 1 && nums[j] == nums[j - 1]) {
+				continue;
+			}
+
+			int start = j + 1;
+			int end = n - 1;
+
+			while (start < end) {
+				long sum = (long) nums[i] + nums[j] + nums[start] + nums[end];
+
+				if (sum > target) {
+					end--;
+				} else if (sum < target) {
+					start++;
+				} else {
+					result.add(Arrays.asList(nums[i], nums[j], nums[start], nums[end]));
+					start++;
+					end--;
+
+					while (start < end && nums[start] == nums[start - 1]) {
+						start++;
+					}
+
+					while (start < end && nums[end] == nums[end + 1]) {
+						end--;
+					}
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
+1838. Frequency of the most frequent element
+
+public int maxFrequency(int[] nums, int k) {
+	int n = nums.length;
+	int left = 0, right = 0;
+	long sum = 0;
+	int max = Integer.MIN_VALUE;
+	Arrays.sort(nums);
+
+	while (right < n) {
+		sum += nums[right];
+
+		while ((long) nums[right] * (right - left + 1) > (sum + k)) {
+			sum -= nums[left];
+			left++;
+		}
+
+		max = Math.max(max, right - left + 1);
+		right++;
+	}
+
+	return max;
+
+}
+
+88. Merge Sorted Array
+public void merge(int[] nums1, int m, int[] nums2, int n) {
+	int i = m - 1;
+	int j = n - 1;
+	int k = m + n - 1;
+
+	while (j >= 0) {
+		if (i >= 0 && nums1[i] > nums2[j]) {
+			nums1[k] = nums1[i];
+			i--;
+		} else {
+			nums1[k] = nums2[j];
+			j--;
+		}
+
+		k--;
+	}
+}
+
+Strings:
+
+Reverse a string without using extra space
+E.g.
+"Shubham"
+
+char[] str = {'S', 'h', 'u', 'b', 'h', 'a', 'm'};
+int start = 0;
+int end = str.length - 1;
+
+while (start < end)
+{
+	// XOR for swapping the variable
+	str[start] ^= str[end];
+	str[end] ^= str[start];
+	str[start] ^= str[end];
+
+	++start;
+	--end;
+}
+
+3. Longest Substring Without Repeating Characters
+
+public int lengthOfLongestSubstring(String s) {
+	int maxLength = 0;
+	int left = 0;
+	Set<Character> charSet = new HashSet<>();
+
+	for (int i = 0; i < s.length(); i++) {
+		if (charSet.contains(s.charAt(i))) {
+			while (charSet.contains(s.charAt(i))) {
+				charSet.remove(s.charAt(left));
+				left++;
+			}
+		}
+		
+		maxLength = Math.max(maxLength, i - left + 1);
+
+		charSet.add(s.charAt(i));
+	}
+
+	return maxLength;
+}
+
+46. Permutations
+
+public List<List<Integer>> permute(int[] nums) {
+	return getPermutations(nums, 0, nums.length, new ArrayList<List<Integer>>());
+}
+
+private List<List<Integer>> getPermutations(int[] nums, int idx, int n, List<List<Integer>> result) {
+	// Base case
+	if (idx == n) {
+		result.add(new ArrayList<Integer>(Arrays.stream(nums).boxed().collect(Collectors.toList())));
+		return result;
+	}
+
+	for (int i = idx; i < n; i++) {
+		// Swap
+		int t = nums[idx];
+		nums[idx] = nums[i];
+		nums[i] = t;
+
+		getPermutations(nums, idx + 1, n, result);
+
+		// Swap back to original
+		t = nums[idx];
+		nums[idx] = nums[i];
+		nums[i] = t;
+	}
+
+	return result;
+}
+
+704. Binary Search
+public int search(int[] nums, int target) {
+	int n = nums.length;
+	int low = 0;
+	int high = n - 1;
+
+	while (low <= high) {
+		int mid = low + (high - low) / 2;
+
+		if (nums[mid] == target) {
+			return mid;
+		}
+
+		if (target < nums[mid]) {
+			high = mid - 1;
+		} else {
+			low = mid + 1;
+		}
+	}
+
+	return -1;
+}
+
+11. Container with most water
+
+Approach (Sliding window):
+1. Initialize left pointer to first element and right to the last element.
+2. Calculate the distance between them and multiply by the smallest pillar.
+3. Calculate the maximum.
+4. If the left pillar is small, move the left pointer, else move the right pointer.
+
+public int maxArea(int[] height) {
+	int n = height.length;
+	int left = 0;
+	int right = n - 1;
+	int max = Integer.MIN_VALUE;
+
+	while (left < right) {
+		int minPillar = Math.min(height[left], height[right]);
+		max = Math.max(max, (right - left) * minPillar);
+
+		if (height[left] < height[right]) {
+			left++;
+		} else {
+			right--;
+		}
+	}
+
+	return max;
+}
+
+LINKED LIST
+206. Reverse Linked List
+
+Approach:
+1. Store the next element.
+2. Point the current element to the previous element (previous element will be null initially);
+3. Now, previous element will be current element & current element will be the next element.
+
+Code:
+public ListNode reverseList(ListNode head) {
+	ListNode curr = head;
+	ListNode prev = null;
+	ListNode next = null;
+
+	while (curr != null) {
+		next = curr.next;
+		curr.next = prev;
+
+		prev = curr;
+		curr = next;
+	}
+
+	return prev;
+}
+
+876. Middle of the linked list
+public ListNode middleNode(ListNode head) {
+	ListNode p1 = head;
+	ListNode p2 = head;
+	int i = 1;
+
+	while (p2 != null) {
+		p2 = p2.next;
+		i++;
+
+		if (i % 2 != 0) {
+			p1 = p1.next;
+		}
+	}
+
+	return p1;
+}
+
+21. Merge two sorted list
+Code:
+public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+	ListNode dummy = new ListNode(-1);
+	ListNode curr = dummy;
+
+	while (list1 != null && list2 != null) {
+		if (list1.val <= list2.val) {
+			curr.next = list1;
+			list1 = list1.next;
+		} else {
+			curr.next = list2;
+			list2 = list2.next;
+		}
+
+		curr = curr.next;
+	}
+
+	while (list1 != null) {
+		curr.next = list1;
+		list1 = list1.next;
+		curr = curr.next;
+	}
+
+	while (list2 != null) {
+		curr.next = list2;
+		list2 = list2.next;
+		curr = curr.next;
+	}
+
+	return dummy.next;
+}
+
+160. Intersection of two linked list
+
+Approach:
+1. While both nodes are not equals keep iterating to the next element.
+2. If any node reaches its end, point it to the head of other node. At some point they will meet.
+
+Code:
+public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+	ListNode a = headA;
+	ListNode b = headB;
+
+	while (a != b) {
+		a = a == null ? headB : a.next;
+		b = b == null ? headA : b.next;
+	}
+
+	return a;
+}
+
+
+387. First Unique Character in a String
+
+Approach:
+1. Iterate every character in the string and store its frequency.
+2. Again iterate the string and if the frequency of a character is 1, return it.
+
+121. Best time to buy and sell stock
+Approach:
+1. Initialize variable buy and max to max and min integer values respectively.
+2. Iterate the array and if the current element is less than the previous buy then re-assign it to variable buy;
+3. Find the max between current maximum profit and the difference between current element and buy.
+
+Code:
+public int maxProfit(int[] prices) {
+	int buy = Integer.MAX_VALUE;
+	int max = Integer.MIN_VALUE;
+
+	for (int i = 0; i < prices.length; i++) {
+		if (prices[i] < buy) {
+			buy = prices[i];
+		}
+
+		max = Math.max(max, prices[i] - buy);
+	}
+
+	return max;
+}
+
+647. Palindromic Substrings
+public int countSubstrings(String s) {
+	int count = 0;
+	int n = s.length();
+
+	for (int i = 0; i < n; i++) {
+		for (int j = i; j < n; j++) {
+			if (checkPalindrome(s, i, j)) {
+				count++;
+			}
+		}
+	}
+
+	return count;
+}
+
+private boolean checkPalindrome(String s, int i, int j) {
+	if (i >= j) {
+		return true;
+	}
+
+	if (s.charAt(i) == s.charAt(j)) {
+		return checkPalindrome(s, i + 1, j - 1);
+	}
+
+	return false;
+}
+
+56. Merge Intervals
+public int[][] merge(int[][] intervals) {
+
+	// 1. Sort the array by the start time
+	// 2. Declare two variables (prevStart and prevEnd) which will hold the min and max time of the sub-interval
+	// 3. Iterate the intervals:
+	// a. If the start time of current interval is less than the end time of previous interval
+	// that means its an overlapping interval. Store the max and min time of this interval in prevStart
+	// and prevEnd.
+	// b. Else add the interval (prevStart and prevEnd) to the result and reassign prevStart and prevEnd to the current interval
+	// Remember to add prevStart and prevEnd to the result at the end of the loop to avoid missing the last interval
+	
+	if (intervals.length <= 1) return intervals;
+
+	Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));
+	List<List<Integer>> result = new ArrayList<>();
+	int prevStart = intervals[0][0];
+	int prevEnd = intervals[0][1];
+
+	for (int i = 0; i < intervals.length; i++) {
+		int start = intervals[i][0];
+		int end = intervals[i][1];
+
+		if (start <= prevEnd) {
+			prevEnd = Math.max(prevEnd, end);
+			prevStart = Math.min(prevStart, start);
+		} else {
+			result.add(Arrays.asList(prevStart, prevEnd));
+			prevStart = start;
+			prevEnd = end;
+		}
+	}
+
+	result.add(Arrays.asList(prevStart, prevEnd));
+
+	// Convert list to array
+	int[][] resultArray = new int[result.size()][2];
+
+	for (int i = 0; i < result.size(); i++) {
+		resultArray[i][0] = result.get(i).get(0);
+		resultArray[i][1] = result.get(i).get(1);
+	}
+
+	return resultArray;
+
+}
+
+57. Insert Interval
+
+public int[][] insert(int[][] intervals, int[] newInterval) {
+	// Approach:
+	// i = 0
+	// If the end time of current interval is less than the start time of newInterval, then it is not overlapping and we cannot merge/insert
+	// the newInterval with this interval, so just add it to the result.
+	// a. while (intervals[i][1] < newInterval[0]):
+	// Insert the interval into result
+	// Now we will have overlapping intervals.
+	// b. while (intervals[i][0] <= newInterval[1]):
+	// newInterval[0] = min(newInterval[0], intervals[i][0])
+	// newInterval[1] = max(newInterval[1], intervals[i][1])
+	// c. Insert remaining intervals into result
+
+	int i = 0;
+	int n = intervals.length;
+	List<int[]> result = new ArrayList<>();
+
+	while (i < n && intervals[i][1] < newInterval[0]) {
+		result.add(intervals[i]);
+		i++;
+	}
+
+	while (i < n && intervals[i][0] <= newInterval[1]) {
+		newInterval[0] = Math.min(newInterval[0], intervals[i][0]);
+		newInterval[1] = Math.max(newInterval[1], intervals[i][1]);
+		i++;
+	}
+
+	result.add(newInterval);
+
+	while (i < n) {
+		result.add(intervals[i]);
+		i++;
+	}
+
+	return result.toArray(new int[result.size()][]);
+
+}
+
+
+shivaniingle04
+Shivani@123456789
+
+
