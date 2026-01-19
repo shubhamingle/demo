@@ -722,3 +722,83 @@ class MyLinkedList {
  * obj.deleteAtIndex(index);
  */
 
+146. LRU Cache
+class LRUCache {
+    int capacity;
+    Map<Integer, Node> cache;
+    // dummy head and tail to remove the LRU and add the resently used node at the begining
+    Node head = new Node(-1, -1);
+    Node tail = new Node(-1, -1);
+
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        cache = new HashMap<>();
+        head.next = tail;
+        tail.prev = head;
+    }
+
+    private void delete(Node node) {
+        Node next = node.next;
+        Node prev = node.prev;
+        prev.next = next;
+        next.prev = prev;
+    }
+
+    private void insert(Node node) {
+        Node next = head.next;
+        head.next = node;
+        node.prev = head;
+        node.next = next;
+        next.prev = node;
+    }
+    
+    public int get(int key) {
+        if (cache.containsKey(key)) {
+            Node node = cache.get(key);
+            delete(node);
+            insert(node);
+            cache.put(key, node);
+
+            return node.value;
+        }
+
+        return -1;
+    }
+    
+    public void put(int key, int value) {
+        if (cache.containsKey(key)) {
+            Node node = cache.get(key);
+            cache.remove(key);
+            delete(node);
+        }
+
+        if (capacity == cache.size()) {
+            cache.remove(tail.prev.key);
+            delete(tail.prev);
+        }
+
+        insert(new Node(key, value));
+        cache.put(key, head.next);
+    }
+}
+
+class Node {
+    int key;
+    int value;
+    Node next;
+    Node prev;
+
+    public Node(int key, int value) {
+        this.key = key;
+        this.value = value;
+        this.next = null;
+        this.prev = null;
+    }
+}
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
