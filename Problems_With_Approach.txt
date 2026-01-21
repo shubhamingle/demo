@@ -802,3 +802,28 @@ class Node {
  * int param_1 = obj.get(key);
  * obj.put(key,value);
  */
+
+209. Minimum Size Subarray Sum
+public int minSubArrayLen(int target, int[] nums) {
+        int n = nums.length;
+        int left = 0, right = 0, sum = 0;
+        int minLength = Integer.MAX_VALUE;
+
+        while (left < n && right < n) {
+            sum += nums[right];
+
+            while (sum >= target) {
+                minLength = Math.min(minLength, right - left + 1);
+                sum -= nums[left];
+                left++;
+            }
+            
+            right++;
+        }
+
+        if (minLength == Integer.MAX_VALUE) {
+            minLength = 0;
+        }
+
+        return minLength;
+    }
