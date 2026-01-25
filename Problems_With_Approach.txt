@@ -827,3 +827,53 @@ public int minSubArrayLen(int target, int[] nums) {
 
         return minLength;
     }
+
+496. Next Greater Element I
+
+public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        int[] result = new int[nums1.length];
+        Stack<Integer> stack = new Stack<>();
+        Map<Integer, Integer> nextGreater = new HashMap<>();
+
+        for (int i = nums2.length - 1; i >= 0; i--) {
+            while (!stack.isEmpty() && stack.peek() < nums2[i]) {
+                stack.pop();
+            }
+
+            nextGreater.put(nums2[i], stack.isEmpty() ? -1 : stack.peek());
+            stack.push(nums2[i]);
+        }
+
+        for (int i = 0; i < nums1.length; i++) {
+            result[i] = nextGreater.get(nums1[i]);
+        }
+
+        return result;
+    }
+
+503. Next Greater Element II
+
+public int[] nextGreaterElements(int[] nums) {
+        int n = nums.length;
+        int[] result = new int[n];
+        Stack<Integer> stack = new Stack<>();
+        int i = n - 1;
+        int j = 1;
+
+        while (i >= 0 && j <= 2) {
+            while (!stack.isEmpty() && nums[i] >= stack.peek()) {
+                stack.pop();
+            }
+
+            result[i] = stack.isEmpty() ? -1 : stack.peek();
+            stack.push(nums[i]);
+            i--;
+
+            if (i == -1) {
+                i = n - 1;
+                j++;
+            }
+        }
+
+        return result;
+    }
