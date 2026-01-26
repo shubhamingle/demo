@@ -1,3 +1,28 @@
+Find K-Largest 	--> Min Heap
+Find K-Smallest --> Max Heap
+
+Heap:
+It is a binary tree (each node can have at most two children) that follows the heap property. In a min heap, Parent ≤ Children and in max heap Parent ≥ Children.
+
+
+215. Kth Largest Element in an Array
+public int findKthLargest(int[] nums, int k) {
+    Queue<Integer> minHeap = new PriorityQueue<>();
+
+    for (int i = 0; i < nums.length; i++) {
+        minHeap.add(nums[i]);
+
+        if (minHeap.size() > k) {
+            minHeap.poll(); // removes the head (smallest) and rebalances the tree
+        }
+    }
+
+    return minHeap.peek();
+}
+
+T.C: O(nlogk) --> n elements * logk for each push and pop
+S.C: O(k)
+
 268. Missing Number
 
 Approach:
@@ -877,3 +902,4 @@ public int[] nextGreaterElements(int[] nums) {
 
         return result;
     }
+
