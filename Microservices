@@ -1,0 +1,94 @@
+Stateless Vs Stateful Services
+
+Stateless Services: In a stateless service, the server does not store any data about the client session. Every request from the client must contain all the information necessary for the server to fulfill it. The servers usually query the database to exactly know who the client is. So if the same request goes to different instances of the microservice, they can verify you using the database.
+
+Stateful Services: A stateful service remembers previous interactions. The server stores "state" (session data, cached results, or transaction history) based on the client's identity. So if the same request goes to different instance of the microservice, it does not know who the client is and cannot process the request.
+
+Use Stateless Services When...
+1. High Scalability is a Priority. If you expect traffic to fluctuate (e.g., an e-commerce site during Black Friday), stateless is the winner. You can spin up 100 new instances of your service, and they can immediately start handling traffic because they don't need to "know" anything about the users beforehand.
+
+2. You are Building Microservices. In a microservice mesh, a single user request might hop through five different services. If those services were stateful, you would have to sync the user's session across the entire network, which creates massive latency.
+
+3. Reliability is Critical. If a stateless server dies, the Load Balancer simply routes the request to the next server. The user never notices.
+
+Use Stateful Services When...
+1. You Need Real-Time, Low-Latency Updates If you are building a multiplayer game or a high-frequency trading platform, the "state" (player position, stock price) changes every millisecond. Round-tripping to an external database to fetch the state every time is too slow. Keeping that data in the server's local memory is much faster.
+
+---------------------------------------------------------------------------------
+
+What are the steps to design a microservice from scratch?
+
+1. Define the Bounded Context (Domain)
+Before building, you must identify what the service owns. Use Domain-Driven Design (DDD) to ensure the service focuses on a single business capability. For example in an e-commerce system, if the 'Order' service changes, you dont have to re-deploy the 'Shipping' service.
+
+2. Design the API Contract
+Once you know what the service does, define how others talk to it. This is your "contract" with the rest of the system.
+Protocol: Choose between REST (standard for web), gRPC (high performance), or GraphQL (flexible queries).
+Documentation: Use OpenAPI/Swagger to define endpoints. This allows other teams to start their work before you've even finished your code.
+
+3. Choose the Data Strategy
+In microservices, the rule is "One Database per Service." If two services share a database, they are tightly coupled and will eventually break each other.
+Stateless vs. Stateful: As we discussed, keep the logic stateless.
+Database Type: Match the database to the needs. Use a Relational DB (PostgreSQL) for ACID compliance (Payments) because of Strong consistency or NoSQL (MongoDB/Cassandra) (Eventual consistency) for high-scale document storage (User Profiles).
+
+4. Plan Communication Patterns
+How will this service interact with others?
+Synchronous: Use for immediate feedback (e.g., checking if a password is correct).
+Asynchronous: Use for long-running tasks or decoupling. For example, when an "Order" is placed, the service emits an event to a Message Broker (RabbitMQ or Kafka). The "Email" service picks it up later.
+
+5. Implement Observability
+Since microservices are distributed, debugging is harder. You need to "bake in" visibility from day one.
+Logging: Use structured logging (JSON) and a central aggregator (ELK Stack).
+Tracing: Implement Distributed Tracing (e.g., Jaeger or Zipkin) to follow a single request as it travels through multiple services.
+Health Checks: Provide /health and /ready endpoints for orchestrators like Kubernetes.
+
+6. Deployment & Resilience
+Finally, plan for failure. In a distributed system, things will go wrong.
+Containerization: Wrap the service in Docker to ensure it runs the same in Dev as it does in Production.
+Circuit Breakers: Implement patterns to stop a failing service from taking down the entire system (if Service B is down, Service A should return a cached response rather than hanging).
+
+---------------------------------------------------------------------------------
+
+API First Vs Code First
+API First → Design the API before writing code
+Code First → Write code first, API comes out of it
+For distributed systems & teams → API First
+For small / internal services → Code First is fine
+
+---------------------------------------------------------------------------------
+
+How do you handle duplicate events and idempotency?
+
+In distributed systems:
+Retries, Network timeouts, Duplicate events are normal, not bugs. So your system must be idempotent.
+
+What idempotency means?
+--> Performing the same operation multiple times has the same effect as once.
+
+Core techniques to handle duplicate events
+1. Idempotency key (MOST common)
+
+Each event/request has a unique ID.
+
+{
+  "eventId": "order-123",
+  "type": "PAYMENT_SUCCESS"
+}
+
+How to handle?
+Store processed eventId in DB / cache. If seen again → ignore
+
+INSERT INTO processed_events(event_id)
+VALUES ('order-123')
+ON CONFLICT DO NOTHING;
+
+2. Database constraints (BEST protection)
+Let DB enforce idempotency.
+
+Example:
+UNIQUE(order_id, event_type)
+
+If duplicate arrives:
+
+Insert fails
+Treat as already processed
