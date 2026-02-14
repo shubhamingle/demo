@@ -856,91 +856,194 @@ public int minSubArrayLen(int target, int[] nums) {
 496. Next Greater Element I
 
 public int[] nextGreaterElement(int[] nums1, int[] nums2) {
-        int[] result = new int[nums1.length];
-        Stack<Integer> stack = new Stack<>();
-        Map<Integer, Integer> nextGreater = new HashMap<>();
+	int[] result = new int[nums1.length];
+	Stack<Integer> stack = new Stack<>();
+	Map<Integer, Integer> nextGreater = new HashMap<>();
 
-        for (int i = nums2.length - 1; i >= 0; i--) {
-            while (!stack.isEmpty() && stack.peek() < nums2[i]) {
-                stack.pop();
-            }
+	for (int i = nums2.length - 1; i >= 0; i--) {
+		while (!stack.isEmpty() && stack.peek() < nums2[i]) {
+			stack.pop();
+		}
 
-            nextGreater.put(nums2[i], stack.isEmpty() ? -1 : stack.peek());
-            stack.push(nums2[i]);
-        }
+		nextGreater.put(nums2[i], stack.isEmpty() ? -1 : stack.peek());
+		stack.push(nums2[i]);
+	}
 
-        for (int i = 0; i < nums1.length; i++) {
-            result[i] = nextGreater.get(nums1[i]);
-        }
+	for (int i = 0; i < nums1.length; i++) {
+		result[i] = nextGreater.get(nums1[i]);
+	}
 
-        return result;
-    }
+	return result;
+}
+
 
 503. Next Greater Element II
 
 public int[] nextGreaterElements(int[] nums) {
-        int n = nums.length;
-        int[] result = new int[n];
-        Stack<Integer> stack = new Stack<>();
-        int i = n - 1;
-        int j = 1;
+	int n = nums.length;
+	int[] result = new int[n];
+	Stack<Integer> stack = new Stack<>();
+	int i = n - 1;
+	int j = 1;
 
-        while (i >= 0 && j <= 2) {
-            while (!stack.isEmpty() && nums[i] >= stack.peek()) {
-                stack.pop();
-            }
+	while (i >= 0 && j <= 2) {
+		while (!stack.isEmpty() && nums[i] >= stack.peek()) {
+			stack.pop();
+		}
 
-            result[i] = stack.isEmpty() ? -1 : stack.peek();
-            stack.push(nums[i]);
-            i--;
+		result[i] = stack.isEmpty() ? -1 : stack.peek();
+		stack.push(nums[i]);
+		i--;
 
-            if (i == -1) {
-                i = n - 1;
-                j++;
-            }
-        }
+		if (i == -1) {
+			i = n - 1;
+			j++;
+		}
+	}
 
-        return result;
-    }
+	return result;
+}
 
 
 169. Majority Element
 
 Boyer-Moore Majority Voting Algorithm
-1. Initialize variable majorityElement to the first element of the array and a count variable to 1.
-2. Iterate the array and if the current element is same as the majority element then increment the count else decrement it.
-3. If the count becomes 0 then update the majorityElement to the current element and reset count to 1.
-4. In the end 
+1. Initialize variable candidate to the first element of the array and a count variable to 1.
+2. Iterate the array from 2nd element and if the current element is same as the majority element then increment the count else decrement it.
+3. If the count becomes 0 then update the candidate to the current element and reset count to 1.
+4. In the end again iterate the array and find the count of candidate element. If it is greater than 50% of elements then return it, else return -1.
 
 public int majorityElement(int[] nums) {
-        int n = nums.length;
-        
-        if (n == 1) return nums[0];
+	int n = nums.length;
+	
+	if (n == 1) return nums[0];
 
-        int candidate = nums[0];
-        int count = 1;
+	int candidate = nums[0];
+	int count = 1;
 
-        for (int i = 1; i < n; i++) {
-            if (nums[i] == candidate) {
-                count++;
-            } else {
-                count--;
+	for (int i = 1; i < n; i++) {
+		if (nums[i] == candidate) {
+			count++;
+		} else {
+			count--;
 
-                if (count == 0) {
-                    candidate = nums[i];
-                    count++;
-                }
-            }
-        }
+			if (count == 0) {
+				candidate = nums[i];
+				count++;
+			}
+		}
+	}
 
-        count = 0;
-        for (int i = 0; i < n; i++) {
-            if (nums[i] == candidate) {
-                count++;
-            }
-        }
+	count = 0;
+	for (int i = 0; i < n; i++) {
+		if (nums[i] == candidate) {
+			count++;
+		}
+	}
 
-        if (count > (n / 2)) return candidate;
+	if (count > (n / 2)) return candidate;
 
-        return -1;
-    }
+	return -1;
+}
+
+128. Longest Consecutive Sequence
+
+Approach:
+1. Iterate the given array and add all elements into a Set.
+2. Iterate the Set and check if the element 'e' is the start of the sequence i.e there should not exist element 'e' - 1 in the Set.
+3. Once you find the element which is the start of the sequence, then keep incrementing that element and check if it exist in the Set. If it does, then update the length which is the max of current length and current element in sequence minus the start element of the sequence.
+
+public int longestConsecutive(int[] nums) {
+	int n = nums.length;
+
+	if (n == 0) return 0;
+
+	Set<Integer> numsSet = new HashSet();
+	int maxLength = 1;
+	
+	for (int i = 0; i < n; i++) {
+		numsSet.add(nums[i]);
+	}
+
+	for (int x: numsSet) {
+		if (!numsSet.contains(x - 1)) {
+			int y = x + 1;
+
+			while (numsSet.contains(y)) {
+				maxLength = Math.max(maxLength, y - x + 1);
+				y++;
+			}
+		}
+	}
+
+	return maxLength;
+}
+
+49. Group Anagrams
+
+Approach:
+1. Keep a Map which will maintain the list of all anagrams.
+
+2. Iterate the given String array
+
+3. Create an integer array of size 26 since there are 26 alphabets. This array will have '1' at the corresponding character position. For e.g. the String is "eat", so the array would look like below:
+e = 101 - 97 = 4
+
+ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z
+[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+a = 97 - 97 = 0
+ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z
+[1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+t = 116 - 97 = 19
+ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z
+[1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0] => final
+
+4. Now we join the array with some separator and form a String 'key'
+
+5. If the key is present in the map, then add the String to its list. Otherwise add the key and an empty list corrosponding to it.
+
+Why do we need to add a separator when joining the elements of the array?
+E.g. strs = ["bdddddddddd","bbbbbbbbbbc"]
+
+"bdddddddddd"
+ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z
+[0,1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] => [1,0,10]
+
+"bbbbbbbbbbc"
+ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z
+[0,10,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] => [10,1,0]
+
+Without a separator both would produce "1010" and consider both strings as anagrams which is wrong.
+
+Code:
+public List<List<String>> groupAnagrams(String[] strs) {
+	Map<String, List<String>> groupedAnagrams = new HashMap<>();
+
+	for (String str: strs) {
+		int[] count = new int[26];
+
+		for (char c: str.toCharArray()) {
+			count[c - 'a']++;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < 26; i++) {
+			sb.append(count[i]).append("#");
+		}
+
+		String key = sb.toString();
+
+		if (groupedAnagrams.containsKey(key)) {
+			groupedAnagrams.get(key).add(str);
+		} else {
+			groupedAnagrams.put(key, 
+			new ArrayList<>(Arrays.asList(str)));
+		}
+	}
+
+	return new ArrayList<>(groupedAnagrams.values());
+}
+
