@@ -1047,3 +1047,42 @@ public List<List<String>> groupAnagrams(String[] strs) {
 	return new ArrayList<>(groupedAnagrams.values());
 }
 
+
+42. Trapping Rain Water
+
+Approach:
+1. Find the highest bar. You have to find how much water is trapped to the left and right of this bar because water cannot get trapped on the highest bar.
+2. On the left and right side find the highest bar. The water trapped at each point/bar will the left/right highest bar minus current bar.
+
+Code:
+public int trap(int[] height) {
+	int n = height.length;
+	int sum = 0;
+	int highest = height[0];
+	int highestIdx = 0;
+
+	for (int i = 0; i < n; i++) {
+		if (height[i] > highest) {
+			highest = height[i];
+			highestIdx = i;
+		}
+	}
+
+	int leftHighest = height[0];
+
+	for (int i = 0; i < highestIdx; i++) {
+		leftHighest = Math.max(leftHighest, height[i]);
+
+		sum += leftHighest - height[i];
+	}
+
+	int rightHighest = height[n - 1];
+
+	for (int i = n - 1; i > highestIdx; i--) {
+		rightHighest = Math.max(rightHighest, height[i]);
+
+		sum += rightHighest - height[i];
+	}
+
+	return sum;
+}
