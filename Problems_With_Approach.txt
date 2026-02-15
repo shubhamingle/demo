@@ -1086,3 +1086,133 @@ public int trap(int[] height) {
 
 	return sum;
 }
+
+560. Subarray Sum Equals K
+
+Approach:
+1. We maintain a Map which tracks the sum of elements upto i and its count for all elements i in the given array.
+2. While iterating elements from 0 to n, find the sum of all elements upto element i.
+3. Then check if (sum - k) exists in the Map.
+
+Code:
+public int subarraySum(int[] nums, int k) {
+	int n = nums.length;
+	Map<Integer, Integer> prefixSumMap = new HashMap<>();
+	prefixSumMap.put(0, 1);
+	int sum = 0;
+	int count = 0;
+
+	for (int i = 0; i < n; i++) {
+		sum += nums[i];
+
+		if (prefixSumMap.containsKey((int) (sum - k))) {
+			count += prefixSumMap.get((int) (sum - k));
+		}
+
+		prefixSumMap.put(sum, prefixSumMap.getOrDefault(sum, 0) + 1);
+	}
+
+	return count;
+}
+
+438. Find All Anagrams in a String
+
+Approach:
+1. Create an array of size 26 (26 alphabets in English) and increment the count of array elements corrosponding to the alphabets of p. In the same loop do the same with alphabets of s, so that the time complexity is truly O(n). Basically we are finding the frequency of characters of the given string.
+2. Then compare the array of initial window.
+3. Then iterate the string 's' from window size i.e. length of string 'p' because we just compared the arrays upto the window size.
+4. Keep updating the frequency of characters. Increment towards the right and decrement towards the left and check if both arrays match.
+
+
+Code:
+public List<Integer> findAnagrams(String s, String p) {
+	int sLength = s.length();
+	int pLength = p.length();
+	List<Integer> anagramIndices = new ArrayList<>();
+
+	if (pLength > sLength) return anagramIndices;
+
+	int[] sCount = new int[26];
+	int[] pCount = new int[26];
+
+	for (int i = 0; i < pLength; i++) {
+		pCount[p.charAt(i) - 'a']++;
+		sCount[s.charAt(i) - 'a']++;
+	}
+
+	if (Arrays.equals(sCount, pCount)) {
+		anagramIndices.add(0);
+	}
+
+	for (int i = pLength; i < sLength; i++) {
+		sCount[s.charAt(i) - 'a']++;
+
+		sCount[s.charAt(i - pLength) - 'a']--;
+
+		if (Arrays.equals(sCount, pCount)) {
+			anagramIndices.add(i - pLength + 1);
+		}
+	}
+
+	return anagramIndices;
+}
+
+567. Permutation in String
+
+Code:
+public boolean checkInclusion(String s1, String s2) {
+	int s1Length = s1.length();
+	int s2Length = s2.length();
+
+	if (s1Length > s2Length) {
+		return false;
+	}
+
+	int[] s1Count = new int[26];
+	int[] s2Count = new int[26];
+
+	for (int i = 0; i < s1Length; i++) {
+		s1Count[s1.charAt(i) - 'a']++;
+		s2Count[s2.charAt(i) - 'a']++;
+	}
+
+	if (Arrays.equals(s1Count, s2Count)) {
+		return true;
+	}
+
+	for (int i = s1Length; i < s2Length; i++) {
+		s2Count[s2.charAt(i) - 'a']++;
+
+		s2Count[s2.charAt(i - s1Length) - 'a']--;
+
+		if (Arrays.equals(s1Count, s2Count)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+3. Longest Substring Without Repeating Characters
+
+Code:
+public int lengthOfLongestSubstring(String s) {
+	Set<Character> charSet = new HashSet<>();
+	int maxLength = 0;
+	int left = 0, right = 0;
+
+	while (right < s.length()) {
+		char c = s.charAt(right);
+
+		while (charSet.contains(c) && left < right) {
+			charSet.remove(s.charAt(left));
+			left++;
+		}
+
+		charSet.add(c);
+		maxLength = Math.max(maxLength, right - left + 1);
+		right++;
+	}
+
+	return maxLength;
+}
