@@ -1216,3 +1216,106 @@ public int lengthOfLongestSubstring(String s) {
 
 	return maxLength;
 }
+
+54. Spiral Matrix
+
+public List<Integer> spiralOrder(int[][] matrix) {
+	int top = 0, left = 0;
+	int right = matrix[0].length - 1;
+	int bottom = matrix.length - 1;
+	List<Integer> result = new ArrayList<>();
+
+	while (left <= right && top <= bottom) {
+		// left to right
+		for (int i = left; i <= right; i++) {
+			result.add(matrix[top][i]);
+		}
+		top++;
+
+		// top to bottom
+		for (int i = top; i <= bottom; i++) {
+			result.add(matrix[i][right]);
+		}
+		right--;
+
+		// right to left
+		if (top <= bottom) {
+			for (int i = right; i >= left; i--) {
+				result.add(matrix[bottom][i]);
+			}
+			bottom--;
+		}
+
+		// bottom to top
+		if (left <= right) {
+			for (int i = bottom; i >= top; i--) {
+				result.add(matrix[i][left]);
+			}
+			left++;
+		}
+	}
+
+	return result;
+}
+
+48. Rotate Image
+
+public void rotate(int[][] matrix) {
+	int rowLength = matrix.length;
+	int colLength = matrix[0].length;
+
+	// transpose the matrix
+	for (int i = 0; i < rowLength; i++) {
+		for (int j = i + 1; j < colLength; j++) {
+			int t = matrix[i][j];
+			matrix[i][j] = matrix[j][i];
+			matrix[j][i] = t;
+		}
+	}
+
+	// reverse the numbers in each row
+	for (int i = 0; i < rowLength; i++) {
+		int left = 0, right = colLength - 1;
+
+		while (left < right) {
+			int t = matrix[i][left];
+			matrix[i][left] = matrix[i][right];
+			matrix[i][right] = t;
+			left++;
+			right--;
+		}
+	}
+}
+
+19. Remove Nth Node From End of List
+
+Approach:
+1. Maintain a slow and fast pointer.
+2. Move the fast pointer by n nodes so that when the fast pointer reaches the last node, the slow pointer will reach the node which is one node behind the node to be removed.
+3. If the fast pointer has become null after moving it n steps, then the node to be removed was the first node. Since 1 >= n <= sz. sz is the size of linked list.
+Basically if n = sz, then the node to be removed is the head node.
+
+Code:
+public ListNode removeNthFromEnd(ListNode head, int n) {
+	ListNode slow = head;
+	ListNode fast = head;
+
+	for (int i = 0; i < n; i++) {
+		if (fast != null) {
+			fast = fast.next;
+		}
+	}
+
+	if (fast == null) {
+		return slow.next;
+	}
+
+	while (fast.next != null) {
+		slow = slow.next;
+		fast = fast.next;
+	}
+
+	slow.next = slow.next.next;
+
+	return head;
+}
