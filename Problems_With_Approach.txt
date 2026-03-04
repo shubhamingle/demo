@@ -23,6 +23,8 @@ public int findKthLargest(int[] nums, int k) {
 T.C: O(nlogk) --> n elements * logk for each push and pop
 S.C: O(k)
 
+Max Heap: Queue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+
 268. Missing Number
 
 Approach:
@@ -1319,3 +1321,4 @@ public ListNode removeNthFromEnd(ListNode head, int n) {
 
 	return head;
 }
+
