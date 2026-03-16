@@ -3,6 +3,7 @@ Find K-Smallest --> Max Heap
 
 Sum of numbers 1..𝑛 --> n(n+1)/2
 Number of subarrays of size 𝑛 --> n(n+1)/2
+Number of ways to choose 2 elements from 𝑛 elements --> n(n-1)/2
 
 Heap:
 It is a binary tree (each node can have at most two children) that follows the heap property. In a min heap, Parent ≤ Children and in max heap Parent ≥ Children.
