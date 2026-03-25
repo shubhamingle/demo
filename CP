@@ -1,0 +1,79 @@
+Find K-Largest 	--> Min Heap
+Find K-Smallest --> Max Heap
+
+Sum of numbers 1..𝑛 --> n(n+1)/2
+Number of subarrays of size 𝑛 --> n(n+1)/2
+Number of ways to choose 2 elements from 𝑛 elements --> n(n-1)/2
+
+Heap:
+----
+It is a binary tree (each node can have at most two children) that follows the heap property. In a min heap, Parent ≤ Children and in max heap Parent ≥ Children.
+
+• Min Heap: Queue<Integer> minHeap = new PriorityQueue<>();
+• Max Heap: 
+Queue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+OR
+Queue<Integer> maxHeap = new PriorityQueue<>((a, b) -> b - a);
+
+Map:
+---
+• Unordered:
+Map<Integer, Integer> map = new HashMap<>();
+
+• Ordered:
+TreeMap<Integer, Integer> map = new TreeMap<>();
+
+Here by default the map is sorted by key in ascending order.
+
+○ To sort in descending order:
+TreeMap<Integer, Integer> map = new TreeMap<>((a, b) -> b - a);
+
+Note: Here a and b are keys and not values.
+
+• Sort by value (using heap)
+Queue<Map.Entry<Character, Integer>> sortByValueMap = new PriorityQueue<>((e1, e2) -> e1.getValue() - e2.getValue());
+sortByValueMap.addAll(myMap.entrySet());
+
+Set:
+---
+Unordered:
+Set<Integer> set = new HashSet<>();
+
+Ordered:
+Ascending: TreeSet<Integer> set = new TreeSet<>();
+Descending: TreeSet<Integer> set = new TreeSet<>((a, b) -> Integer.compare(b, a));
+
+Common Templates:
+----------------
+for (Map.Entry<Integer, Integer> e : map.entrySet()) {
+    int key = e.getKey();
+    int val = e.getValue();
+}
+
+Use map.keySet() to iterate over keys
+
+Sort array:
+----------
+Arrays.sort(arr);
+Arrays.sort(arr, Collections.reverseOrder());
+
+Note: For primitive arrays (int[], char[]) you CANNOT use comparator directly. For e.g. below line of code will not work.
+Arrays.sort(arr, (a, b) -> b - a); // compile error
+
+Workaround: use Integer[]
+Integer[] arr = {5, 2, 8, 1};
+
+Arrays.sort(arr, (a, b) -> b - a); // descending
+
+Sort ArrayList:
+--------------
+Collections.sort(list); // ascending
+Collections.sort(list, (a, b) -> Integer.compare(b, a)); // descending
+OR
+list.sort((a, b) -> Integer.compare(b, a));
+
+Sorting objects:
+---------------
+List<int[]> list = new ArrayList<>();
+
+list.sort((a, b) -> a[1] - b[1]);
