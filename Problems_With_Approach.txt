@@ -1,14 +1,3 @@
-Find K-Largest 	--> Min Heap
-Find K-Smallest --> Max Heap
-
-Sum of numbers 1..𝑛 --> n(n+1)/2
-Number of subarrays of size 𝑛 --> n(n+1)/2
-Number of ways to choose 2 elements from 𝑛 elements --> n(n-1)/2
-
-Heap:
-It is a binary tree (each node can have at most two children) that follows the heap property. In a min heap, Parent ≤ Children and in max heap Parent ≥ Children.
-
-
 215. Kth Largest Element in an Array
 public int findKthLargest(int[] nums, int k) {
     Queue<Integer> minHeap = new PriorityQueue<>();
@@ -26,8 +15,6 @@ public int findKthLargest(int[] nums, int k) {
 
 T.C: O(nlogk) --> n elements * logk for each push and pop
 S.C: O(k)
-
-Max Heap: Queue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
 
 268. Missing Number
 
@@ -1325,5 +1312,4 @@ public ListNode removeNthFromEnd(ListNode head, int n) {
 
 	return head;
 }
-
 
