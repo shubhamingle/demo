@@ -580,41 +580,38 @@ public int[][] merge(int[][] intervals) {
 57. Insert Interval
 
 public int[][] insert(int[][] intervals, int[] newInterval) {
-	// Approach:
-	// i = 0
-	// If the end time of current interval is less than the start time of newInterval, then it is not overlapping and we cannot merge/insert
-	// the newInterval with this interval, so just add it to the result.
-	// a. while (intervals[i][1] < newInterval[0]):
-	// Insert the interval into result
-	// Now we will have overlapping intervals.
-	// b. while (intervals[i][0] <= newInterval[1]):
-	// newInterval[0] = min(newInterval[0], intervals[i][0])
-	// newInterval[1] = max(newInterval[1], intervals[i][1])
-	// c. Insert remaining intervals into result
-
 	int i = 0;
 	int n = intervals.length;
-	List<int[]> result = new ArrayList<>();
+	List<int[]> mergedIntervals = new ArrayList<>();
 
+	// While end time of current interval is less than the start time of new interval, add it to result because it is non over-lapping.
 	while (i < n && intervals[i][1] < newInterval[0]) {
-		result.add(intervals[i]);
+		mergedIntervals.add(intervals[i]);
 		i++;
 	}
 
+	// While the start of current interval is less than or equal to the end of new interval, it is overlapping. And since it is overlapping, we find the min and max of our new overlapped interval.
 	while (i < n && intervals[i][0] <= newInterval[1]) {
 		newInterval[0] = Math.min(newInterval[0], intervals[i][0]);
 		newInterval[1] = Math.max(newInterval[1], intervals[i][1]);
 		i++;
 	}
 
-	result.add(newInterval);
+	mergedIntervals.add(newInterval);
 
+	// Add the remaining intervals
 	while (i < n) {
-		result.add(intervals[i]);
+		mergedIntervals.add(intervals[i]);
 		i++;
 	}
 
-	return result.toArray(new int[result.size()][]);
+	int[][] result = new int[mergedIntervals.size()][2];
+
+	for (int j = 0; j < mergedIntervals.size(); j++) {
+		result[j] = mergedIntervals.get(j);
+	}
+
+	return result;
 
 }
 
