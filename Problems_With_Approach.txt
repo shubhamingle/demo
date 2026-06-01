@@ -1210,25 +1210,24 @@ public int lengthOfLongestSubstring(String s) {
 54. Spiral Matrix
 
 public List<Integer> spiralOrder(int[][] matrix) {
-	int top = 0, left = 0;
-	int right = matrix[0].length - 1;
-	int bottom = matrix.length - 1;
+	int rowLen = matrix[0].length;
+	int colLen = matrix.length;
+
+	int left = 0, right = rowLen - 1, top = 0, bottom = colLen - 1;
+
 	List<Integer> result = new ArrayList<>();
 
 	while (left <= right && top <= bottom) {
-		// left to right
 		for (int i = left; i <= right; i++) {
 			result.add(matrix[top][i]);
 		}
 		top++;
 
-		// top to bottom
 		for (int i = top; i <= bottom; i++) {
 			result.add(matrix[i][right]);
 		}
 		right--;
 
-		// right to left
 		if (top <= bottom) {
 			for (int i = right; i >= left; i--) {
 				result.add(matrix[bottom][i]);
@@ -1236,7 +1235,6 @@ public List<Integer> spiralOrder(int[][] matrix) {
 			bottom--;
 		}
 
-		// bottom to top
 		if (left <= right) {
 			for (int i = bottom; i >= top; i--) {
 				result.add(matrix[i][left]);
