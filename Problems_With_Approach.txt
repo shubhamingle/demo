@@ -1308,3 +1308,32 @@ public ListNode removeNthFromEnd(ListNode head, int n) {
 	return head;
 }
 
+647. Palindromic Substring
+
+class Solution {
+    public int countSubstrings(String s) {
+        int count = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            // For odd length palindromes
+            count += findCount(s, i, i);
+
+            // For even length palindromes
+            count += findCount(s, i, i + 1);
+        }
+
+        return count;
+    }
+
+    private int findCount(String s, int left, int right) {
+        int count = 0;
+
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            count++;
+            left--;
+            right++;
+        }
+
+        return count;
+    }
+}
