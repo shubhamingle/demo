@@ -1337,3 +1337,8 @@ class Solution {
         return count;
     }
 }
+
+189: Rotate Array (rotate right by k)
+Step 1: Reverse the entire array
+Step 2: Reverse the first k elements
+Step 3: Reverse the remaining n-k elements
