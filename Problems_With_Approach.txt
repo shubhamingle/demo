@@ -1342,3 +1342,47 @@ class Solution {
 Step 1: Reverse the entire array
 Step 2: Reverse the first k elements
 Step 3: Reverse the remaining n-k elements
+
+GFG: Second Largest Element
+public int getSecondLargest(int[] arr) {
+	int first = Integer.MIN_VALUE;
+	int second = Integer.MIN_VALUE;
+	
+	for (int i = 0; i < arr.length; i++) {
+		if (arr[i] > first) {
+			second = first;
+			first = arr[i];
+		} else if (arr[i] > second && arr[i] != first) {
+			second = arr[i];
+		}
+	}
+	
+	if (second == Integer.MIN_VALUE)
+		return - 1;
+	
+	return second;
+}
+
+GFG: Minimum Platforms
+public int minPlatform(int arr[], int dep[]) {
+	if (arr.length == 1)
+		return 1;
+	
+	Arrays.sort(arr);
+	Arrays.sort(dep);
+	
+	int i = 1, j = 0, platforms = 1, max = 0;
+	
+	while (i < arr.length && j < dep.length) {
+		if (arr[i] <= dep[j]) {
+			platforms++;
+			i++;
+			max = Math.max(max, platforms);
+		} else {
+			platforms--;
+			j++;
+		}
+	}
+	
+	return max;
+}
