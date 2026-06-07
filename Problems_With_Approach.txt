@@ -1378,7 +1378,7 @@ public int getSecondLargest(int[] arr) {
 	}
 	
 	if (second == Integer.MIN_VALUE)
-		return - 1;
+		return -1;
 	
 	return second;
 }
