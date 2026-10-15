@@ -1,0 +1,57 @@
+Your existing code should be open to adding new behavior but closed to repeatedly modifying stable code.
+
+Example: Payment processing
+
+Suppose your application initially supports credit cards and PayPal.
+
+class PaymentService {
+    public void pay(String method, double amount) {
+        if (method.equals("CARD")) {
+            System.out.println("Paying by card");
+        } else if (method.equals("PAYPAL")) {
+            System.out.println("Paying by PayPal");
+        }
+    }
+}
+
+When you add UPI, you must modify PaymentService. Add another gateway, and you modify it again. The class keeps changing as the list of payment methods grows.
+
+Better design: Use an interface
+
+interface PaymentProcessor {
+    void pay(double amount);
+}
+
+class CardPaymentProcessor implements PaymentProcessor {
+    public void pay(double amount) {
+        System.out.println("Paying by card: " + amount);
+    }
+}
+
+class UpiPaymentProcessor implements PaymentProcessor {
+    public void pay(double amount) {
+        System.out.println("Paying by UPI: " + amount);
+    }
+}
+
+Now the main service depends on the interface:
+
+class PaymentService {
+    public void processPayment(
+            PaymentProcessor processor,
+            double amount) {
+        processor.pay(amount);
+    }
+}
+
+Usage:
+
+PaymentService service = new PaymentService();
+
+service.processPayment(
+    new CardPaymentProcessor(), 500);
+
+service.processPayment(
+    new UpiPaymentProcessor(), 800);
+
+When you add a new payment method, you create another implementation of PaymentProcessor. The existing PaymentService does not need to change.
