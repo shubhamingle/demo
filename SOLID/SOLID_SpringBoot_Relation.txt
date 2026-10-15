@@ -1,0 +1,41 @@
+1. Single Responsibility Principle (SRP)
+
+"A class should have only one responsibility."
+
+How Spring Boot Enforces It:
+The standard Layered Architecture.
+@RestController: Exclusively handles HTTP serialization, request mapping, and HTTP status codes.
+@Service: Exclusively manages business rules, transaction coordination, and domain logic.
+@Repository: Exclusively encapsulates database access, queries, and persistence.
+
+The Interviewer's Trap:
+"If I write business logic inside a @RestController, does Spring Boot stop me?
+Answer: "No, Spring won't throw a compile error, but doing so violates SRP. Spring provides dedicated stereo-type annotations precisely so each layer has one clear responsibility. Mixing persistence or business logic in a controller violates SRP and destroys unit testability."
+
+2. Open / Closed Principle (OCP)
+
+"Classes should be open for extension, but closed for modification."
+
+How Spring Boot Enforces It:
+Auto-Configuration (@ConditionalOnMissingBean): Spring Boot’s starter dependencies define default beans that are open to extension. You can override a default datasource or cache manager by simply defining your own @Bean without modifying Spring Boot's internal code.
+AOP & Interceptors: Cross-cutting concerns (logging, security, transaction management via @Transactional) extend the behavior of methods without modifying their source code.
+
+The Interviewer's Trap:
+"Suppose we have a payment processing service. New gateways (Stripe, PayPal) keep getting added. How do you implement this in Spring Boot adhering to OCP?"
+Answer:"Create a PaymentProcessor interface. Each provider (StripePaymentProcessor, PayPalPaymentProcessor) implements it as a @Component. In the service, inject a Map<String, PaymentProcessor> or List<PaymentProcessor>. When a new gateway comes along, we simply add a new class without modifying existing classes."
+
+3. Liskov Substitution Principle (LSP)
+
+"Subtypes must be substitutable for their base types without breaking client behavior."
+
+How Spring Boot Enforces It:
+Spring Data Repositories: Your custom repository extends JpaRepository<User, Long>. Anywhere Spring expects a repository, your implementation behaves strictly according to the repository contract without violating pagination, sorting, or basic CRUD guarantees.
+Proxy Generation (Dynamic Proxies & CGLIB): Spring wraps your @Transactional or @Async beans in proxies. Because these proxies inherit from or implement the same interfaces as your classes, client code can call them seamlessly without knowing a proxy was substituted.
+
+The Interviewer's Trap:
+"If you have an interface NotificationService with two beans @Component("email") and @Component("sms"), does using @Qualifier violate LSP?
+"The Winning Answer:"No. @Qualifier resolves bean ambiguity for the IoC container. As long as both EmailService and SmsService fulfill the behavioral contract of NotificationService without throwing unexpected runtime exceptions or breaking invariants, LSP is fully preserved."
+
+4. Interface Segregation Principle (ISP)"Clients should not be forced to depend on methods they do not use."How Spring Boot Enforces It:Spring Data Repository Hierarchy: Instead of forcing you to implement one gigantic interface, Spring splits capabilities into granular layers:Repository (marker)CrudRepository (basic CRUD)PagingAndSortingRepository (pagination & sorting)JpaRepository (JPA-specific batch flushing, pagination, CRUD)If a read-only microservice only needs pagination, it doesn't need to inherit unnecessary batching methods.The Interviewer's Trap:"Why doesn’t CrudRepository just extend everything including JPA flush and batch operations?"The Winning Answer:"Because of ISP. A generic NoSQL or lightweight key-value store might implement CrudRepository without needing relational concepts like JPA persistence context flushing. Splitting them into focused interfaces prevents forcing unnecessary methods onto implementers."
+
+5. Dependency Inversion Principle (DIP)"High-level modules should not depend on low-level modules; both should depend on abstractions."How Spring Boot Enforces It:This is the entire reason Spring exists: Inversion of Control (IoC) & Dependency Injection (DI).Your high-level OrderService does not say new MySQLOrderRepository().Instead, OrderService declares a dependency on the interface OrderRepository. Spring's IoC container instantiates and injects the concrete implementation at runtime.The Interviewer's Trap:"Is Dependency Injection (DI) the exact same thing as Dependency Inversion (DIP)?"The Winning Answer:"No. DIP is the design principle (the rule: depend on abstractions, not concretions). DI is the design pattern/mechanism used by Spring Boot to implement DIP (providing the concrete instance from the outside via constructor injection)."Quick Cheat-Sheet for InterviewsSOLID PrincipleSpring Boot Mechanism / FeatureSRP@RestController vs @Service vs @Repository layered separationOCP@ConditionalOnMissingBean, AOP (@Transactional), Plugin/Strategy patternsLSPSpring CGLIB/JDK dynamic proxies, Spring Data interface contractsISPGranular repository hierarchy (CrudRepository, PagingAndSortingRepository)DIPSpring IoC Container and Constructor-based Dependency Injection
