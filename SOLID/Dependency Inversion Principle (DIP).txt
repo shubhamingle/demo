@@ -2,7 +2,8 @@ This principle states that we must use abstraction (abstract classes and interfa
 
 Code:
 
-// Violates DIP
+/* ---------- Violates DIP ---------- */
+
 // The LightSwitch (high-level module) directly depends on Bulb (low-level module).
 // You cannot reuse LightSwitch for LED, TubeLight, SmartLight and any change in Bulb affects LightSwitch.
 
@@ -32,9 +33,7 @@ class LightSwitch {
     }
 }
 
-// ----------------------------------------------------------------------------------------------------------
-
-// DIP-Compliant Design (Using Abstraction)
+/* ---------- DIP-Compliant Design (Using Abstraction) ---------- */
 
 Step 1: Create an abstraction
 interface Switchable {
