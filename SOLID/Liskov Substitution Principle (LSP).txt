@@ -1,5 +1,4 @@
-This principle states that objects of a superclass should be replaceable with objects of its subclass without altering the correctness of the program. 
-In simpler terms, if class B is a subclass of A, then anywhere you can use an A, you should be able to use a B without breaking the behavior.
+**This principle states that objects of a superclass should be replaceable with objects of its subclass without altering the correctness of the program. In simpler terms, if class B is a subclass of A, then anywhere you can use an object of A, you should be able to use an object of B without breaking the behavior.**
 
 The popular sentence “Object of parent class should be replaceable with object of child class” is poorly worded.
 
