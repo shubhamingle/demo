@@ -3,7 +3,7 @@ The goal of ISP is similar to single responsibility principle.
 
 Code:
 
-//Violates ISP
+/* ---------- Violates ISP ---------- */
 
 interface Worker {
 	void work();
@@ -38,18 +38,16 @@ class Robot implements Worker {
 
 	@Override
 	public void eat() {
-		// Robots don't eat, so this is an empty/dummy implementation
+		throw new UnsupportedOperationException("Robots cannot eat.");
 	}
 
 	@Override
 	public void sleep() {
-		// Robots don't sleep, so this is an empty/dummy implementation
+		throw new UnsupportedOperationException("Robots cannot sleep.");
 	}
 }
 
-// ----------------------------------------------------------------------------------------------------
-
-// Adheres to ISP
+/* ---------- Adheres to ISP ---------- */
 
 interface Workable {
 	void work();
@@ -86,4 +84,3 @@ class Robot implements Workable {
 		System.out.println("Robot working.");
 	}
 }
-
